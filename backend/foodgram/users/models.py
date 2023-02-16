@@ -19,7 +19,7 @@ class Follow(models.Model):
     )
 
     class Meta:
-        ordering = [models.F('author').desc(nulls_last=True)]
+        ordering = (models.F('author').desc(nulls_last=True),)
         verbose_name = 'Подписка'
         verbose_name_plural = 'Подписки'
         constraints = [

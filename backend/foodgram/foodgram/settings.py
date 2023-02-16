@@ -109,3 +109,9 @@ USE_TZ = True
 STATIC_URL = 'static/'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+MIN_COOKING_TIME = 1
+
+MAX_CHARFIELD_LENGTH = 200
+
+COLORFIELD_LENGTH = 7
