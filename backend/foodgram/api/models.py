@@ -1,21 +1,102 @@
 from django.core.validators import MinValueValidator, RegexValidator
 from django.db import models
+from django.db.models.constraints import UniqueConstraint
 from foodgram.settings import (COLORFIELD_LENGTH, MAX_CHARFIELD_LENGTH,
                                MIN_COOKING_TIME)
 from users.models import User
 
 
-class Tag:
+class Cart(models.Model):
+    user = models.ForeignKey(
+        on_delete=models.CASCADE,
+        related_name='carts',
+        to=User,
+        verbose_name='Пользователь'
+    )
+    recipe = models.ForeignKey(
+        on_delete=models.CASCADE,
+        related_name='carts',
+        to='Recipe',
+        verbose_name='Рецепт'
+    )
+
+    class Meta:
+        constraint = [
+            UniqueConstraint(
+                fields=('user', 'recipe'),
+                name='Этот рецепт уже добавлен в корзину.'
+            )
+        ]
+        ordering = ('-id',)
+        verbose_name = 'Корзина'
+
+
+class Favorite(models.Model):
+    user = models.ForeignKey(
+        on_delete=models.CASCADE,
+        related_name='favorites',
+        to=User,
+        verbose_name='Пользователь'
+    )
+    recipe = models.ForeignKey(
+        on_delete=models.CASCADE,
+        related_name='favorites',
+        to='Recipe',
+        verbose_name='Рецепт'
+    )
+
+    class Meta:
+        ordering = ('-id',),
+        verbose_name = 'Избранное'
+        verbose_name_plural = 'Избранные'
+
+
+class Ingredient(models.Model):
     name = models.CharField(
         max_length=MAX_CHARFIELD_LENGTH,
-        verbose_name='Тег')
+        verbose_name='Название ингредиента'
+    )
+    units = models.CharField(
+        max_length=15,
+        verbose_name='Единицы измерения'
+    )
+
+    class Meta:
+        ordering = ('-id',)
+        verbose_name = 'Ингрединт'
+        verbose_name_plural = 'Ингрединты'
+
+
+class IngredientAmount(models.Model):
+    amount = models.IntegerField(
+        verbose_name='Количество'
+    )
+    ingredient = models.ForeignKey(
+        on_delete=models.CASCADE,
+        related_name='ingredients',
+        to='Ingredient',
+        verbose_name='Ингредиент'
+    )
+    recipe = models.ForeignKey(
+        on_delete=models.CASCADE,
+        related_name='recipes',
+        to='Recipe',
+        verbose_name='Рецепт'
+    )
+
+
+class Tag:
     color = models.CharField(
-        max_length=COLORFIELD_LENGTH,
         default='#000000',
+        max_length=COLORFIELD_LENGTH,
+        unique=True,
         validators=(
             RegexValidator(regex=r'^#([A-Fa-f0-9]{6})$'),
         ),
-        unique=True
+    )
+    name = models.CharField(
+        max_length=MAX_CHARFIELD_LENGTH,
+        verbose_name='Тег'
     )
     slug = models.SlugField()
 
@@ -56,36 +137,3 @@ class Recipe(models.Model):
         verbose_name = 'Рецепт'
         verbose_name_plural = 'Рецепты'
 
-
-class Ingredient(models.Model):
-    name = models.CharField(
-        max_length=MAX_CHARFIELD_LENGTH,
-        verbose_name='Название ингредиента'
-    )
-    units = models.CharField(
-        max_length=15,
-        verbose_name='Единицы измерения'
-    )
-
-    class Meta:
-        ordering = ('-id',)
-        verbose_name = 'Ингрединт'
-        verbose_name_plural = 'Ингрединты'
-
-
-class IngredientAmount(models.Model):
-    amount = models.IntegerField(
-        verbose_name='Количество'
-    )
-    ingredient = models.ForeignKey(
-        on_delete=models.CASCADE,
-        related_name='ingredients',
-        to=Ingredient,
-        verbose_name='Ингредиент'
-    )
-    recipe = models.ForeignKey(
-        on_delete=models.CASCADE,
-        related_name='recipes',
-        to=Recipe,
-        verbose_name='Рецепт'
-    )
