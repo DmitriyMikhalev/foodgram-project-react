@@ -19,16 +19,16 @@ class Follow(models.Model):
     )
 
     class Meta:
-        ordering = [models.F('author').desc(nulls_last=True)]
-        verbose_name = 'Подписка'
-        verbose_name_plural = 'Подписки'
         constraints = [
             models.UniqueConstraint(
                 fields=('author', 'user',),
-                name='follow exists'
+                name='Подписка уже существует.'
             ),
             models.CheckConstraint(
                 check=models.Q(~(models.F('author') == models.F('user'))),
-                name='self follow is not accessed'
+                name='Подписка на самого себя не разрешена.'
             )
         ]
+        ordering = ('author', 'user')
+        verbose_name = 'Подписка'
+        verbose_name_plural = 'Подписки'

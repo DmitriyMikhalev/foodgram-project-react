@@ -1,6 +1,139 @@
+from django.core.validators import MinValueValidator, RegexValidator
 from django.db import models
-from django.core.validators import MinValueValidator
+from django.db.models.constraints import UniqueConstraint
+from foodgram.settings import (COLORFIELD_LENGTH, MAX_CHARFIELD_LENGTH,
+                               MIN_COOKING_TIME)
 from users.models import User
+
+
+class Cart(models.Model):
+    recipe = models.ForeignKey(
+        on_delete=models.CASCADE,
+        related_name='carts',
+        to='Recipe',
+        verbose_name='Рецепт'
+    )
+    user = models.ForeignKey(
+        on_delete=models.CASCADE,
+        related_name='carts',
+        to=User,
+        verbose_name='Пользователь'
+    )
+
+    class Meta:
+        constraints = [
+            UniqueConstraint(
+                fields=('user', 'recipe'),
+                name='Этот рецепт уже добавлен в корзину.'
+            )
+        ]
+        ordering = ('-id',)
+        verbose_name = 'Корзина'
+        verbose_name_plural = 'Корзины'
+
+
+class Favorite(models.Model):
+    recipe = models.ForeignKey(
+        on_delete=models.CASCADE,
+        related_name='favorites',
+        to='Recipe',
+        verbose_name='Рецепт'
+    )
+    user = models.ForeignKey(
+        on_delete=models.CASCADE,
+        related_name='favorites',
+        to=User,
+        verbose_name='Пользователь'
+    )
+
+    class Meta:
+        ordering = ('-id',),
+        verbose_name = 'Избранное'
+        verbose_name_plural = 'Избранные'
+
+
+class Ingredient(models.Model):
+    measurement_unit = models.CharField(
+        max_length=MAX_CHARFIELD_LENGTH,
+        verbose_name='Единицы измерения'
+    )
+    name = models.CharField(
+        db_index=True,
+        max_length=MAX_CHARFIELD_LENGTH,
+        verbose_name='Название ингредиента'
+    )
+
+    class Meta:
+        constraints = [
+            UniqueConstraint(
+                fields=('measurement_unit', 'name'),
+                name='Такой ингредиент уже существует.'
+            )
+        ]
+        ordering = ('-id',)
+        verbose_name = 'Ингрединт'
+        verbose_name_plural = 'Ингрединты'
+
+    def __str__(self):
+        return self.name
+
+
+class IngredientAmount(models.Model):
+    amount = models.PositiveIntegerField(
+        validators=(
+            MinValueValidator(
+                limit_value=1,
+                message='Должна быть хотя бы единица ингредиента.'
+            ),
+        ),
+        verbose_name='Количество'
+    )
+    ingredient = models.ForeignKey(
+        on_delete=models.CASCADE,
+        related_name='ingredients',
+        to='Ingredient',
+        verbose_name='Ингредиент'
+    )
+    recipe = models.ForeignKey(
+        on_delete=models.CASCADE,
+        related_name='recipes',
+        to='Recipe',
+        verbose_name='Рецепт'
+    )
+
+
+class Tag:
+    color = models.CharField(
+        blank=True,
+        default=None,
+        max_length=COLORFIELD_LENGTH,
+        null=True,
+        unique=True,
+        validators=(
+            RegexValidator(regex=r'^#([A-Fa-f0-9]{6})$'),
+        ),
+        verbose_name='Цвет'
+    )
+    name = models.CharField(
+        max_length=MAX_CHARFIELD_LENGTH,
+        unique=True,
+        verbose_name='Название тега'
+    )
+    slug = models.SlugField(
+        blank=True,
+        max_length=MAX_CHARFIELD_LENGTH,
+        null=True,
+        unique=True,
+        verbose_name='Слаг тега'
+    )
+
+    class Meta:
+        ordering = ('-id',)
+        verbose_name = 'Тег'
+        verbose_name_plural = 'Теги'
+
+    def __str__(self):
+        return self.name
 
 
 class Recipe(models.Model):
@@ -10,21 +143,40 @@ class Recipe(models.Model):
         to=User,
         verbose_name='Автор рецепта'
     )
-    tags = ...         # ManyToMany to Tag
-    ingredients = ...  # FK to Ingredient
-    image = ...        # base64
+    cooking_time = models.PositiveSmallIntegerField(
+        validators=(
+            MinValueValidator(
+                limit_value=MIN_COOKING_TIME,
+                message='Время приготовления не может составлять '
+                        + 'менее 1 минуты.'
+            ),
+        ),
+        verbose_name='Время приготовления'
+    )
+    image = models.ImageField(
+        upload_to='recipes/%d/%m/%Y/',
+        verbose_name='Изображение'
+    )
+    ingredients = models.ForeignKey(
+        on_delete=models.CASCADE,
+        related_name='recipes',
+        to='Ingredient',
+        verbose_name='Ингредиенты'
+    )
     name = models.CharField(
-        max_length=200,
+        max_length=MAX_CHARFIELD_LENGTH,
         verbose_name='Название рецепта'
     )
-    text = models.TextField()
-    cooking_time = models.PositiveSmallIntegerField(
-        verbose_name='Время приготовления',
-        validators=[
-            MinValueValidator(
-                limit_value=1,
-                message='Проверте, что время приготовления составляет '
-                        + 'не менее 1 минуты.'
-            )
-        ]
+    tags = models.ManyToManyField(
+        to=Tag,
+        verbose_name='Теги'
     )
+    text = models.TextField()
+
+    class Meta:
+        ordering = ('-id',)
+        verbose_name = 'Рецепт'
+        verbose_name_plural = 'Рецепты'
+
+    def __str__(self):
+        return self.name
