@@ -25,7 +25,7 @@ class Follow(models.Model):
                 name='Подписка уже существует.'
             ),
             models.CheckConstraint(
-                check=models.Q(~(models.F('author') == models.F('user'))),
+                check=~models.Q(author=models.F("user")),
                 name='Подписка на самого себя не разрешена.'
             )
         ]
