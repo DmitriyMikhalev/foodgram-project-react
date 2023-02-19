@@ -29,6 +29,6 @@ class Follow(models.Model):
                 name='Подписка на самого себя не разрешена.'
             )
         ]
-        ordering = (models.F('author').desc(nulls_last=True),)
+        ordering = ('author', 'user')
         verbose_name = 'Подписка'
         verbose_name_plural = 'Подписки'
