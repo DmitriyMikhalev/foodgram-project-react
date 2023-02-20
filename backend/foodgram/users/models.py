@@ -1,20 +1,83 @@
-from django.contrib.auth import get_user_model
+from django.conf import settings
+from django.contrib.auth.models import (AbstractBaseUser, PermissionsMixin,
+                                        UserManager)
+from django.contrib.auth.validators import UnicodeUsernameValidator
 from django.db import models
 
-User = get_user_model()
+
+class User(AbstractBaseUser, PermissionsMixin):
+    date_joined = models.DateTimeField(
+        auto_now_add=True,
+        verbose_name='Дата регистрации'
+    )
+    email = models.EmailField(
+        error_messages={
+            "unique": "Пользователь с такой почтой уже существует.",
+        },
+        max_length=settings.MAX_EMAIL_LENGTH,
+        unique=True,
+        verbose_name='Адрес электронной почты'
+    )
+    first_name = models.CharField(
+        max_length=settings.MAX_NAMES_LENGTH,
+        verbose_name='Имя'
+    )
+    is_active = models.BooleanField(
+        default=True
+    )
+    is_staff = models.BooleanField(
+        default=False,
+    )
+    last_name = models.CharField(
+        max_length=settings.MAX_NAMES_LENGTH,
+        verbose_name='Фамилия'
+    )
+    password = models.CharField(
+        max_length=settings.MAX_PASSWORD_LENGTH,
+        verbose_name='Пароль'
+    )
+    username = models.CharField(
+        error_messages={
+            "unique": "Пользователь с таким именем уже существует.",
+        },
+        max_length=settings.MAX_NAMES_LENGTH,
+        unique=True,
+        validators=(
+            UnicodeUsernameValidator(),
+        ),
+        verbose_name='Имя пользователя'
+    )
+
+    objects = UserManager()
+
+    EMAIL_FIELD = 'email'
+    REQUIRED_FIELDS = ('username', 'password')
+    USERNAME_FIELD = 'email'
+
+    class Meta:
+        ordering = ('-id',)
+        verbose_name = 'Пользователь'
+        verbose_name_plural = 'Пользователи'
+
+    def get_full_name(self):
+        full_name = '%s %s' % (self.first_name, self.last_name)
+        return full_name.strip()
+
+    def get_short_name(self):
+        return self.first_name
 
 
 class Follow(models.Model):
     author = models.ForeignKey(
         on_delete=models.CASCADE,
         related_name='following',
-        to=User,
+        to=settings.AUTH_USER_MODEL,
         verbose_name='Автор'
     )
     user = models.ForeignKey(
         on_delete=models.CASCADE,
         related_name='follower',
-        to=User,
+        to=settings.AUTH_USER_MODEL,
         verbose_name='Подписчик'
     )
 

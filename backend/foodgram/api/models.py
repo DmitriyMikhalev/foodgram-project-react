@@ -1,9 +1,7 @@
+from django.conf import settings
 from django.core.validators import MinValueValidator, RegexValidator
 from django.db import models
 from django.db.models.constraints import UniqueConstraint
-from foodgram.settings import (COLORFIELD_LENGTH, MAX_CHARFIELD_LENGTH,
-                               MIN_COOKING_TIME)
-from users.models import User
 
 
 class Cart(models.Model):
@@ -16,7 +14,7 @@ class Cart(models.Model):
     user = models.ForeignKey(
         on_delete=models.CASCADE,
         related_name='carts',
-        to=User,
+        to=settings.AUTH_USER_MODEL,
         verbose_name='Пользователь'
     )
 
@@ -42,7 +40,7 @@ class Favorite(models.Model):
     user = models.ForeignKey(
         on_delete=models.CASCADE,
         related_name='favorites',
-        to=User,
+        to=settings.AUTH_USER_MODEL,
         verbose_name='Пользователь'
     )
 
@@ -54,12 +52,12 @@ class Favorite(models.Model):
 
 class Ingredient(models.Model):
     measurement_unit = models.CharField(
-        max_length=MAX_CHARFIELD_LENGTH,
+        max_length=settings.MAX_CHARFIELD_LENGTH,
         verbose_name='Единицы измерения'
     )
     name = models.CharField(
         db_index=True,
-        max_length=MAX_CHARFIELD_LENGTH,
+        max_length=settings.MAX_CHARFIELD_LENGTH,
         verbose_name='Название ингредиента'
     )
 
@@ -104,13 +102,13 @@ class Recipe(models.Model):
     author = models.ForeignKey(
         on_delete=models.CASCADE,
         related_name='recipes',
-        to=User,
+        to=settings.AUTH_USER_MODEL,
         verbose_name='Автор рецепта'
     )
     cooking_time = models.PositiveSmallIntegerField(
         validators=(
             MinValueValidator(
-                limit_value=MIN_COOKING_TIME,
+                limit_value=settings.MIN_COOKING_TIME,
                 message='Время приготовления не может составлять '
                         + 'менее 1 минуты.'
             ),
@@ -129,7 +127,7 @@ class Recipe(models.Model):
         verbose_name='Ингредиенты'
     )
     name = models.CharField(
-        max_length=MAX_CHARFIELD_LENGTH,
+        max_length=settings.MAX_CHARFIELD_LENGTH,
         verbose_name='Название рецепта'
     )
     tags = models.ManyToManyField(
@@ -152,7 +150,7 @@ class Tag(models.Model):
     color = models.CharField(
         blank=True,
         default=None,
-        max_length=COLORFIELD_LENGTH,
+        max_length=settings.COLORFIELD_LENGTH,
         null=True,
         unique=True,
         validators=(
@@ -161,13 +159,13 @@ class Tag(models.Model):
         verbose_name='Цвет'
     )
     name = models.CharField(
-        max_length=MAX_CHARFIELD_LENGTH,
+        max_length=settings.MAX_CHARFIELD_LENGTH,
         unique=True,
         verbose_name='Название тега'
     )
     slug = models.SlugField(
         blank=True,
-        max_length=MAX_CHARFIELD_LENGTH,
+        max_length=settings.MAX_CHARFIELD_LENGTH,
         null=True,
         unique=True,
         verbose_name='Слаг тега'
