@@ -45,6 +45,12 @@ class Favorite(models.Model):
     )
 
     class Meta:
+        constraints = [
+            UniqueConstraint(
+                fields=('user', 'recipe'),
+                name='Этот рецепт уже добавлен в избранное.'
+            )
+        ]
         ordering = ('-id',),
         verbose_name = 'Избранное'
         verbose_name_plural = 'Избранные'
@@ -96,6 +102,11 @@ class IngredientAmount(models.Model):
         to='Recipe',
         verbose_name='Рецепт'
     )
+
+    class Meta:
+        ordering = ('-id',)
+        verbose_name = 'Количество ингредиента'
+        verbose_name_plural = 'Количества ингредиентов'
 
 
 class Recipe(models.Model):

@@ -1,8 +1,9 @@
 from django.conf import settings
-from django.contrib.auth.models import (AbstractBaseUser, PermissionsMixin,
-                                        UserManager)
+from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin
 from django.contrib.auth.validators import UnicodeUsernameValidator
 from django.db import models
+
+from .managers import UserManager
 
 
 class User(AbstractBaseUser, PermissionsMixin):
@@ -47,22 +48,21 @@ class User(AbstractBaseUser, PermissionsMixin):
         ),
         verbose_name='Имя пользователя'
     )
-
+ 
     objects = UserManager()
-
-    EMAIL_FIELD = 'email'
-    REQUIRED_FIELDS = ('username', 'password')
+ 
+    REQUIRED_FIELDS = ('username', 'password', 'first_name', 'last_name')
     USERNAME_FIELD = 'email'
-
+ 
     class Meta:
         ordering = ('-id',)
         verbose_name = 'Пользователь'
         verbose_name_plural = 'Пользователи'
-
+ 
     def get_full_name(self):
         full_name = '%s %s' % (self.first_name, self.last_name)
         return full_name.strip()
-
+ 
     def get_short_name(self):
         return self.first_name
 
