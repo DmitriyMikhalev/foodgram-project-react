@@ -35,6 +35,7 @@ urlpatterns = [
         name='schema-redoc'
     ),
     path('api/', include('api.urls', namespace='api')),
+    path('api/', include('users.urls', namespace='users')),
 ]
 
 if settings.DEBUG:
