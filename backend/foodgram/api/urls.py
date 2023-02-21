@@ -1,11 +1,7 @@
 from django.urls import include, path
-from rest_framework.routers import DefaultRouter
 
-router = DefaultRouter()
-
-app_name = 'api'
+app_name = 'users'
 
 urlpatterns = [
-    path('', include('djoser.urls')),
-    path('auth/', include('djoser.urls.authtoken')),
+    path('', include('users.urls', 'users'))
 ]
