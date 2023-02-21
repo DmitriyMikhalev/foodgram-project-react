@@ -51,7 +51,7 @@ class Favorite(models.Model):
                 name='Этот рецепт уже добавлен в избранное.'
             )
         ]
-        ordering = ('-id',),
+        ordering = ('-id',)
         verbose_name = 'Избранное'
         verbose_name_plural = 'Избранные'
 
