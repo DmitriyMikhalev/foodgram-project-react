@@ -178,5 +178,5 @@ DJOSER = {
         'token': 'djoser.serializers.TokenSerializer',
         'token_create': 'djoser.serializers.TokenCreateSerializer',
     },
-    'HIDE_USERS': False  # allow anonyous user to get list of users
+    'HIDE_USERS': False  # allow anonymous user to get list of users
 }
