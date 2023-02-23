@@ -94,11 +94,13 @@ class IngredientAmount(models.Model):
     )
     ingredient = models.ForeignKey(
         on_delete=models.CASCADE,
+        related_name='ingredient_amount',
         to='Ingredient',
         verbose_name='Ингредиент'
     )
     recipe = models.ForeignKey(
         on_delete=models.CASCADE,
+        related_name='ingredient_amount',
         to='Recipe',
         verbose_name='Рецепт'
     )
@@ -107,6 +109,9 @@ class IngredientAmount(models.Model):
         ordering = ('-id',)
         verbose_name = 'Количество ингредиента'
         verbose_name_plural = 'Количества ингредиентов'
+
+    def __str__(self):
+        return self.ingredient.name
 
 
 class Recipe(models.Model):

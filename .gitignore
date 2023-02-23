@@ -3,6 +3,7 @@ __pycache__/
 .vscode/
 .git/
 frontend/build/
+*media/
 
 .env
 !sample.env
