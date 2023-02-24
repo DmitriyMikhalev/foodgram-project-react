@@ -1,10 +1,11 @@
 from django.shortcuts import get_object_or_404
 from rest_framework.fields import ReadOnlyField
 from rest_framework.serializers import ModelSerializer, SerializerMethodField
-from rest_framework.validators import ValidationError
+from rest_framework.validators import UniqueTogetherValidator, ValidationError
 from users.serializers import Base64ImageField, UserSerializer
 
-from .models import Cart, Favorite, Ingredient, IngredientAmount, Recipe, Tag
+from api.models import (Cart, Favorite, Ingredient, IngredientAmount, Recipe,
+                        Tag)
 
 
 class IngredientSerializer(ModelSerializer):
@@ -30,6 +31,12 @@ class IngredientAmountSerializer(ModelSerializer):
             'amount'
         )
         model = IngredientAmount
+        validators = [
+            UniqueTogetherValidator(
+                queryset=IngredientAmount.objects.all(),
+                fields=('ingredient', 'recipe')
+            )
+        ]
 
 
 class TagSerializer(ModelSerializer):
@@ -49,7 +56,8 @@ class RecipeSerializer(ModelSerializer):
     author = UserSerializer(read_only=True)
     ingredients = IngredientAmountSerializer(
         many=True,
-        source='ingredient_amount'
+        source='ingredient_amount',
+        read_only=True
     )
     is_favorited = SerializerMethodField()
     is_in_shopping_cart = SerializerMethodField()
@@ -97,7 +105,8 @@ class RecipeSerializer(ModelSerializer):
         user = self.context.get('request').user
         if user.is_anonymous:
             return False
-
+        obj = Cart.objects.filter(recipe=obj, user=user).exists()
+        print(obj)
         return Cart.objects.filter(recipe=obj, user=user).exists()
 
     def update(self, instance, validated_data):

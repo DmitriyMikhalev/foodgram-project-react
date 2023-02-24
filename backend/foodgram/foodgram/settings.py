@@ -155,7 +155,7 @@ DJOSER = {
     'PERMISSIONS': {
         'set_password': ['djoser.permissions.CurrentUserOrAdmin'],
         'user_create': ['rest_framework.permissions.AllowAny'],
-        'user': ['users.permissions.CurrentUserOrReadOnly'],
+        'user': ['users.permissions.ReadOnly'],
         'token_create': ['rest_framework.permissions.AllowAny'],
         'token_destroy': ['rest_framework.permissions.IsAuthenticated'],
         'user_list': ['rest_framework.permissions.AllowAny'],
