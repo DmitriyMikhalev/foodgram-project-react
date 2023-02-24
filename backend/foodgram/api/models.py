@@ -172,7 +172,7 @@ class Tag(models.Model):
         validators=(
             RegexValidator(regex=r'^#([A-Fa-f0-9]{6})$'),
         ),
-        verbose_name='Цвет'
+        verbose_name='Цвет (hex)'
     )
     name = models.CharField(
         max_length=settings.MAX_CHARFIELD_LENGTH,

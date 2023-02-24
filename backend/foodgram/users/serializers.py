@@ -7,8 +7,9 @@ from djoser.serializers import UserSerializer as BaseUserSerializer
 from rest_framework.fields import ImageField
 from rest_framework.serializers import (ModelSerializer, ReadOnlyField,
                                         SerializerMethodField)
+from rest_framework.validators import ValidationError
 
-from .models import Follow
+from users.models import Follow
 
 User = get_user_model()
 
@@ -36,7 +37,7 @@ class UserSerializer(BaseUserSerializer):
             'username',
             'first_name',
             'last_name',
-            'is_subscribed'
+            'is_subscribed',
         )
         model = User
 
@@ -46,19 +47,6 @@ class UserSerializer(BaseUserSerializer):
             return False
 
         return Follow.objects.filter(user=request_user, author=obj).exists()
-
-
-class RecipeMinifiedSerializer(ModelSerializer):
-    image = Base64ImageField()
-
-    class Meta:
-        model = Recipe
-        fields = (
-            'id',
-            'name',
-            'image',
-            'cooking_time'
-        )
 
 
 class FollowSerializer(ModelSerializer):
@@ -85,10 +73,36 @@ class FollowSerializer(ModelSerializer):
         )
 
     def get_is_subscribed(self, obj):
-        return Follow.objects.filter(author=obj.author, user=obj.user).exists()
+        return True
 
     def get_recipes(self, obj):
-        pass
+        recipes_limit = self.context['request'].query_params.get(
+            'recipes_limit'
+        )
+        recipes = Recipe.objects.filter(author=obj.author)
+        if recipes_limit:
+            if not recipes_limit.isdigit() or recipes_limit == '0':
+                raise ValidationError(
+                    detail={
+                        'recipes_limit': 'Допустимо только натуральное число.'
+                    }
+                )
+            recipes = recipes[:int(recipes_limit)]
+
+        return RecipeMinifiedSerializer(instance=recipes, many=True).data
 
     def get_recipes_count(self, obj):
         return Recipe.objects.filter(author=obj.author).count()
+
+
+class RecipeMinifiedSerializer(ModelSerializer):
+    image = Base64ImageField()
+
+    class Meta:
+        model = Recipe
+        fields = (
+            'id',
+            'name',
+            'image',
+            'cooking_time'
+        )
