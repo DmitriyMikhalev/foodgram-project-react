@@ -1,6 +1,5 @@
 import base64
 
-from api.models import Recipe
 from django.contrib.auth import get_user_model
 from django.core.files.base import ContentFile
 from djoser.serializers import UserSerializer as BaseUserSerializer
@@ -9,6 +8,7 @@ from rest_framework.serializers import (ModelSerializer, ReadOnlyField,
                                         SerializerMethodField)
 from rest_framework.validators import ValidationError
 
+from api.models import Recipe
 from users.models import Follow
 
 User = get_user_model()

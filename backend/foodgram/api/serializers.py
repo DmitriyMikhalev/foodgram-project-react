@@ -3,10 +3,9 @@ from django.shortcuts import get_object_or_404
 from rest_framework.fields import ReadOnlyField
 from rest_framework.serializers import ModelSerializer, SerializerMethodField
 from rest_framework.validators import UniqueTogetherValidator, ValidationError
-from users.serializers import Base64ImageField, UserSerializer
-
 from api.models import (Cart, Favorite, Ingredient, IngredientAmount, Recipe,
                         Tag)
+from users.serializers import Base64ImageField, UserSerializer
 
 
 class IngredientSerializer(ModelSerializer):
@@ -164,6 +163,12 @@ class CreateRecipeSerializer(ModelSerializer, CartFavoriteFlagsMixin):
     def validate(self, data):
         initial_data = self.initial_data
         request = self.context['request']
+        data['author'] = request.user
+
+        if not request.data:
+            raise ValidationError(
+                detail={'errors': 'Пустой запрос, не надо дергать БД :('}
+            )
 
         if request.method == 'POST':
             for field in ('tags', 'ingredients'):
@@ -173,7 +178,7 @@ class CreateRecipeSerializer(ModelSerializer, CartFavoriteFlagsMixin):
                             f'{field}': 'Поле не может быть пустым.'
                         }
                     )
-        data['author'] = request.user
+
         if ingredients := initial_data.get('ingredients'):
             self._validate_ingredients(
                 ingredients=ingredients
