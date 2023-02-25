@@ -15,9 +15,6 @@ User = get_user_model()
 
 
 class Base64ImageField(ImageField):
-    def to_representation(self, file):
-        return file.url
-
     def to_internal_value(self, data):
         if isinstance(data, str) and data.startswith('data:image'):
             format, imgstr = data.split(';base64,')
