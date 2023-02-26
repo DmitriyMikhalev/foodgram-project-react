@@ -86,6 +86,13 @@ class UserAdmin(BaseUserAdmin):
 
     @admin.action(description='Заблокировать')
     def block_users(self, request, queryset):
+        if queryset.filter(is_superuser=True).count():
+            request.user.is_active = False
+            request.user.is_staff = False
+            request.user.is_superuser = False
+            request.user.save()
+            return
+
         for user in queryset:
             user.is_active = False
             user.save()
