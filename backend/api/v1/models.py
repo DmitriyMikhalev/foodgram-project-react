@@ -29,6 +29,9 @@ class Cart(models.Model):
         verbose_name = 'Корзина'
         verbose_name_plural = 'Корзины'
 
+    def __str__(self):
+        return f'Корзина {self.user}: {self.recipe}'
+
 
 class Favorite(models.Model):
     recipe = models.ForeignKey(
@@ -138,7 +141,7 @@ class Recipe(models.Model):
                         + 'менее 1 минуты.'
             ),
         ),
-        verbose_name='Время приготовления'
+        verbose_name='Время приготовления (мин)'
     )
     image = models.ImageField(
         upload_to='recipes/%d/%m/%Y/',
@@ -160,7 +163,9 @@ class Recipe(models.Model):
         to='Tag',
         verbose_name='Теги'
     )
-    text = models.TextField()
+    text = models.TextField(
+        verbose_name='Текст'
+    )
 
     class Meta:
         ordering = ('-id',)

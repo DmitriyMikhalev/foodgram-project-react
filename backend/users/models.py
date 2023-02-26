@@ -35,6 +35,9 @@ class Follow(models.Model):
         verbose_name = 'Подписка'
         verbose_name_plural = 'Подписки'
 
+    def __str__(self):
+        return f'Подписка {self.user}: {self.author}'
+
 
 class User(AbstractBaseUser, PermissionsMixin):
     date_joined = models.DateTimeField(
@@ -54,10 +57,12 @@ class User(AbstractBaseUser, PermissionsMixin):
         verbose_name='Имя'
     )
     is_active = models.BooleanField(
-        default=True
+        default=True,
+        verbose_name='Активный'
     )
     is_staff = models.BooleanField(
         default=False,
+        verbose_name='Модератор'
     )
     last_name = models.CharField(
         max_length=settings.MAX_NAMES_LENGTH,

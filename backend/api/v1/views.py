@@ -87,9 +87,10 @@ class RecipeViewSet(ModelViewSet):
 
         shopping_list = ['Список ингредиентов к покупке:']
         for key, value in result.items():
+            key = key[0].upper() + key[1:]
             amount = value['amount']
             units = value['units']
-            shopping_list.append(f'\n* {key}: {amount} {units}')
+            shopping_list.append(f'\n* {key} ({units}) — {amount}')
 
         shopping_list = ''.join(shopping_list)
         response = HttpResponse(shopping_list, content_type='text/plain')

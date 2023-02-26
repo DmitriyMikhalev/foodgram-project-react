@@ -13,7 +13,9 @@ BOOLEAN_CHOICES = (
 
 
 class RecipeFilter(FilterSet):
-    author = ModelChoiceFilter(queryset=User.objects.all())
+    author = ModelChoiceFilter(
+        queryset=User.objects.all()
+    )
     is_favorited = ChoiceFilter(
         choices=BOOLEAN_CHOICES,
         method='get_is_favorited'
@@ -23,7 +25,6 @@ class RecipeFilter(FilterSet):
         method='get_is_in_shopping_cart'
     )
     tags = AllValuesMultipleFilter(
-        conjoined=True,
         field_name='tags__slug'
     )
 
