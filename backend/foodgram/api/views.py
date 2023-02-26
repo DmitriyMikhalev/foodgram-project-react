@@ -1,3 +1,5 @@
+from django.db.models import F, QuerySet
+from django.http import HttpResponse
 from django.shortcuts import get_object_or_404
 from django_filters import rest_framework as filters
 from rest_framework.decorators import action
@@ -10,7 +12,7 @@ from rest_framework.viewsets import ModelViewSet, ReadOnlyModelViewSet
 from users.serializers import RecipeMinifiedSerializer
 
 from .filters import RecipeFilter
-from .models import Cart, Favorite, Ingredient, Recipe, Tag
+from .models import Cart, Favorite, Ingredient, IngredientAmount, Recipe, Tag
 from .permissions import IsOwnerOrReadOnly
 from .serializers import (CreateRecipeSerializer, IngredientSerializer,
                           ReadRecipeSerializer, TagSerializer)
@@ -95,6 +97,61 @@ class RecipeViewSet(ModelViewSet):
             request=request,
             recipe_pk=pk
         )
+
+    @action(methods=['GET'], detail=False,
+            permission_classes=[IsAuthenticated])
+    def download_shopping_cart(self, request):
+        """
+        <QuerySet [
+            {
+                'amount': 10,
+                'name': 'овощи',
+                'units': 'г'
+            },
+            {
+                'amount': 15,
+                'name': 'сахар',
+                'units': 'г'
+            }
+        ]>
+        """
+        ingredients: QuerySet[dict] = IngredientAmount.objects.filter(
+            recipe__carts__user=request.user
+        ).values(
+            'amount',
+            name=F('ingredient__name'),
+            units=F('ingredient__measurement_unit')
+        )
+        result = {}
+
+        for ingrd_dict in ingredients:
+            if (ingredient := ingrd_dict['name']) not in result:
+                result[ingredient] = {
+                    'amount': ingrd_dict['amount'],
+                    'units': ingrd_dict['units']
+                }
+            else:
+                result[ingredient]['amount'] += ingrd_dict['amount']
+
+        if not result:
+            return Response(
+                data={
+                    'errors': 'Корзина пуста.'
+                },
+                status=HTTP_400_BAD_REQUEST
+            )
+
+        shopping_list = ['Список ингредиентов к покупке:']
+        for key, value in result.items():
+            amount = value['amount']
+            units = value['units']
+            shopping_list.append(f'\n* {key}: {amount} {units}')
+
+        shopping_list = ''.join(shopping_list)
+        response = HttpResponse(shopping_list, content_type='text/plain')
+        response['Content-Disposition'] = 'attachment; filename=shop_list.txt'
+
+        return response
 
 
 class TagViewSet(ReadOnlyModelViewSet):
