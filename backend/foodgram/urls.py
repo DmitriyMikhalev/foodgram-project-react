@@ -8,24 +8,29 @@ from rest_framework import permissions
 
 schema_view = get_schema_view(
     openapi.Info(
-        title='Foodgram API',
+        contact=openapi.Contact(email="admin@foodgram.ru"),
         default_version='v1',
         description='Документация для проекта Foodgram',
-        contact=openapi.Contact(email="admin@foodgram.ru"),
         license=openapi.License(name="BSD License"),
+        title='Foodgram API'
     ),
-    public=True,
     permission_classes=(permissions.AllowAny,),
+    public=True
 )
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/', include('api.urls', namespace='api')),
-] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+]
 
 if settings.DEBUG:
     urlpatterns += [
         path('__debug__/', include('debug_toolbar.urls')),
+        re_path(
+            r'^redoc/$',
+            schema_view.with_ui('redoc', cache_timeout=0),
+            name='schema-redoc'
+        ),
         re_path(
             r'^swagger(?P<format>\.json|\.yaml)$',
             schema_view.without_ui(cache_timeout=0),
@@ -36,9 +41,4 @@ if settings.DEBUG:
             schema_view.with_ui('swagger', cache_timeout=0),
             name='schema-swagger-ui'
         ),
-        re_path(
-            r'^redoc/$',
-            schema_view.with_ui('redoc', cache_timeout=0),
-            name='schema-redoc'
-        ),
-    ]
+    ] + static(document_root=settings.MEDIA_ROOT, prefix=settings.MEDIA_URL)

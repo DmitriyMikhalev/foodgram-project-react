@@ -4,13 +4,14 @@ from rest_framework.routers import DefaultRouter
 from .views import (IngredientViewSet, RecipeViewSet, TagViewSet,
                     TokenCreateView, UserViewSet)
 
+app_name = 'api_v1'
+
 router_v1 = DefaultRouter()
-router_v1.register(prefix='users', viewset=UserViewSet)
+
 router_v1.register(prefix='ingredients', viewset=IngredientViewSet)
 router_v1.register(prefix='recipes', viewset=RecipeViewSet)
 router_v1.register(prefix='tags', viewset=TagViewSet)
-
-app_name = 'api_v1'
+router_v1.register(prefix='users', viewset=UserViewSet)
 
 urlpatterns = [
     path('', include(router_v1.urls)),

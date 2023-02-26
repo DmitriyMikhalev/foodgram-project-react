@@ -11,6 +11,7 @@ class IngredientInline(admin.TabularInline):
 
 @admin.register(Recipe)
 class RecipeAdmin(ModelAdmin):
+    filter_horizontal = ('tags',)
     list_display = (
         'id',
         'author',
@@ -18,7 +19,6 @@ class RecipeAdmin(ModelAdmin):
         'text',
         'cooking_time',
     )
-    filter_horizontal = ('tags',)
     inlines = (IngredientInline,)
 
 

@@ -55,6 +55,9 @@ class Favorite(models.Model):
         verbose_name = 'Избранное'
         verbose_name_plural = 'Избранные'
 
+    def __str__(self):
+        return f'Избранное {self.user}: {self.recipe}'
+
 
 class Ingredient(models.Model):
     measurement_unit = models.CharField(
@@ -143,9 +146,9 @@ class Recipe(models.Model):
     )
     ingredients = models.ManyToManyField(
         related_name='recipes',
-        to='Ingredient',
         through=IngredientAmount,
         through_fields=('recipe', 'ingredient'),
+        to='Ingredient',
         verbose_name='Ингредиенты'
     )
     name = models.CharField(
