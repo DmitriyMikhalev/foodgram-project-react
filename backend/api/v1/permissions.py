@@ -3,6 +3,11 @@ from rest_framework.permissions import SAFE_METHODS, BasePermission
 ALLOWED_METHODS = ('POST', 'PATCH', 'DELETE')
 
 
+class ReadOnly(BasePermission):
+    def has_permission(self, request, view):
+        return request.method == 'GET'
+
+
 class BlockedAccess(BasePermission):
     def has_permission(self, request, view):
         return False

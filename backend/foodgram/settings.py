@@ -142,7 +142,7 @@ COLORFIELD_LENGTH = 7
 AUTH_USER_MODEL = 'users.User'
 
 REST_FRAMEWORK = {
-    'DEFAULT_PAGINATION_CLASS': 'api.paginations.PageLimitPagination',
+    'DEFAULT_PAGINATION_CLASS': 'api.v1.paginations.PageLimitPagination',
     'PAGE_SIZE': 6,
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework.authentication.TokenAuthentication',
@@ -156,26 +156,26 @@ DJOSER = {
     'PERMISSIONS': {
         'set_password': ['djoser.permissions.CurrentUserOrAdmin'],
         'user_create': ['rest_framework.permissions.AllowAny'],
-        'user': ['users.permissions.ReadOnly'],
+        'user': ['api.v1.permissions.ReadOnly'],
         'token_create': ['rest_framework.permissions.AllowAny'],
         'token_destroy': ['rest_framework.permissions.IsAuthenticated'],
         'user_list': ['rest_framework.permissions.AllowAny'],
 
-        'username_reset_confirm': ['api.permissions.BlockedAccess'],
-        'password_reset': ['api.permissions.BlockedAccess'],
-        'password_reset_confirm': ['api.permissions.BlockedAccess'],
-        'set_username': ['api.permissions.BlockedAccess'],
-        'user_delete': ['api.permissions.BlockedAccess'],
-        'username_reset': ['api.permissions.BlockedAccess'],
-        'activation': ['api.permissions.BlockedAccess'],
+        'username_reset_confirm': ['api.v1.permissions.BlockedAccess'],
+        'password_reset': ['api.v1.permissions.BlockedAccess'],
+        'password_reset_confirm': ['api.v1.permissions.BlockedAccess'],
+        'set_username': ['api.v1.permissions.BlockedAccess'],
+        'user_delete': ['api.v1.permissions.BlockedAccess'],
+        'username_reset': ['api.v1.permissions.BlockedAccess'],
+        'activation': ['api.v1.permissions.BlockedAccess'],
 
     },
     'SERIALIZERS': {
         'set_password': 'djoser.serializers.SetPasswordSerializer',
         'user_delete': 'djoser.serializers.UserDeleteSerializer',
-        'user': 'users.serializers.UserSerializer',
+        'user': 'api.v1.serializers.UserSerializer',
         'user_create': 'djoser.serializers.UserCreateSerializer',
-        'current_user': 'users.serializers.UserSerializer',
+        'current_user': 'api.v1.serializers.UserSerializer',
         'token': 'djoser.serializers.TokenSerializer',
         'token_create': 'djoser.serializers.TokenCreateSerializer',
     },
