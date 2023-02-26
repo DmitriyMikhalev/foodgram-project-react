@@ -6,7 +6,7 @@ from .models import Cart, Favorite, Ingredient, IngredientAmount, Recipe, Tag
 
 class IngredientInline(admin.TabularInline):
     model = Recipe.ingredients.through
-    extra = 1
+    extra = 0
 
 
 @admin.register(Recipe)

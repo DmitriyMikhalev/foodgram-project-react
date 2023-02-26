@@ -117,7 +117,7 @@ class IngredientAmount(models.Model):
         verbose_name_plural = 'Количества ингредиентов'
 
     def __str__(self):
-        return self.ingredient.name
+        return self.ingredient.measurement_unit
 
 
 class Recipe(models.Model):

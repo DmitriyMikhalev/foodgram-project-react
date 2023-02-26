@@ -1,4 +1,5 @@
 from django.shortcuts import get_object_or_404
+from django_filters import rest_framework as filters
 from rest_framework.decorators import action
 from rest_framework.filters import SearchFilter
 from rest_framework.permissions import AllowAny, IsAuthenticated
@@ -8,10 +9,11 @@ from rest_framework.status import (HTTP_201_CREATED, HTTP_204_NO_CONTENT,
 from rest_framework.viewsets import ModelViewSet, ReadOnlyModelViewSet
 from users.serializers import RecipeMinifiedSerializer
 
-from api.models import Cart, Favorite, Ingredient, Recipe, Tag
-from api.permissions import IsOwnerOrReadOnly
-from api.serializers import (CreateRecipeSerializer, IngredientSerializer,
-                             ReadRecipeSerializer, TagSerializer)
+from .filters import RecipeFilter
+from .models import Cart, Favorite, Ingredient, Recipe, Tag
+from .permissions import IsOwnerOrReadOnly
+from .serializers import (CreateRecipeSerializer, IngredientSerializer,
+                          ReadRecipeSerializer, TagSerializer)
 
 
 class IngredientViewSet(ReadOnlyModelViewSet):
@@ -25,6 +27,8 @@ class IngredientViewSet(ReadOnlyModelViewSet):
 
 class RecipeViewSet(ModelViewSet):
     queryset = Recipe.objects.all()
+    filter_backends = (filters.DjangoFilterBackend,)
+    filterset_class = RecipeFilter
     permission_classes = (IsOwnerOrReadOnly,)
 
     def get_serializer_class(self):
