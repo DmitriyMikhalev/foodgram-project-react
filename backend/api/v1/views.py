@@ -46,18 +46,27 @@ class RecipeViewSet(ModelViewSet):
             permission_classes=[IsAuthenticated])
     def download_shopping_cart(self, request):
         """
-        <QuerySet [
+        Endpoint to download shopping list (generated using recipes from cart).
+        Works with 1 instance, but detail=False means that DRF should't create
+        route with ../{id}/.
+
+        "ingredients" has structure as:
+          [
             {
-                'amount': 10,
-                'name': 'овощи',
-                'units': 'г'
+              'amount': 10,
+              'name': 'овощи',
+              'units': 'г'
             },
             {
-                'amount': 15,
-                'name': 'сахар',
-                'units': 'г'
-            }
-        ]>
+              'amount': 15,
+              'name': 'сахар',
+              'units': 'г'
+            },
+            ...
+          ]
+        If cart is empty returns HTTP_400.
+
+        Returns shop_list.txt file with ingredients to buy.
         """
         ingredients: QuerySet[dict] = IngredientAmount.objects.filter(
             recipe__carts__user=request.user
@@ -101,6 +110,9 @@ class RecipeViewSet(ModelViewSet):
     @action(detail=True, methods=['DELETE', 'POST'],
             permission_classes=[IsAuthenticated])
     def favorite(self, request, pk):
+        """
+        Endpoint to DELETE or POST 1 recipe at favorites.
+        """
         return self._obj_operation(
             model=Favorite,
             recipe_pk=pk,
@@ -116,6 +128,9 @@ class RecipeViewSet(ModelViewSet):
     @action(detail=True, methods=['DELETE', 'POST'],
             permission_classes=[IsAuthenticated])
     def shopping_cart(self, request, pk):
+        """
+        Endpoint to DELETE or POST 1 recipe at cart.
+        """
         return self._obj_operation(
             model=Cart,
             recipe_pk=pk,
@@ -123,6 +138,14 @@ class RecipeViewSet(ModelViewSet):
         )
 
     def _create_object(self, model, request, recipe_pk):
+        """
+        Create Favorite or Cart entry with given recipe and request's user.
+
+        If passed recipe doesn't exist returns HTTP_404.
+        If object exists returns HTTP_400.
+
+        Returns short view of added recipe with HTTP_201.
+        """
         user = request.user
         obj = model.objects.filter(recipe__pk=recipe_pk, user=user)
 
@@ -143,8 +166,17 @@ class RecipeViewSet(ModelViewSet):
         )
 
     def _delete_object(self, model, request, recipe_pk):
+        """
+        Delete Favorite or Cart entry with given recipe and request's user.
+
+        If passed recipe doesn't exist returns HTTP_404.
+        If object exists returns HTTP_400.
+
+        Returns HTTP_204.
+        """
         user = request.user
-        obj = model.objects.filter(recipe__pk=recipe_pk, user=user)
+        recipe = get_object_or_404(klass=Recipe, pk=recipe_pk)
+        obj = model.objects.filter(recipe=recipe, user=user)
 
         if not obj.exists():
             return Response(
@@ -158,6 +190,7 @@ class RecipeViewSet(ModelViewSet):
         return Response(status=HTTP_204_NO_CONTENT)
 
     def _obj_operation(self, **kwargs):
+        """Calles function according to request method."""
         if kwargs['request'].method == 'DELETE':
             return self._delete_object(**kwargs)
 
@@ -190,12 +223,25 @@ class UserViewSet(BaseUserViewSet):
     @action(detail=False, methods=['GET'],
             permission_classes=[IsAuthenticated])
     def me(self, request, *args, **kwargs):
+        """
+        Allow only GET method. Calles default djoser view.
+        Works with 1 instance, but detail=False means that DRF should't create
+        route with ../{id}/.
+        """
         return super().me(request, *args, **kwargs)
 
     @action(detail=True, methods=['DELETE', 'POST'],
             permission_classes=[IsAuthenticated])
     def subscribe(self, request, id):
-        """user - кто, author - на кого"""
+        """
+        Endpoint to subcribe to user. Request's user - who subscribing.
+
+        If author doesn't exist return HTTP_404.
+        If author and user are equal or subscription already exist (while POST)
+        or subscription already doesn't exist (while DELETE) returns HTTP_400.
+
+        Returns HTTP_204 (while DELETE) or HTTP_201 (while POST).
+        """
         kwargs = {
             'author': get_object_or_404(klass=User, pk=id),
             'user': request.user
@@ -235,6 +281,11 @@ class UserViewSet(BaseUserViewSet):
     @action(detail=False, methods=['GET'],
             permission_classes=[IsAuthenticated])
     def subscriptions(self, request):
+        """
+        Endpoint to get list of request's user subscriptions.
+
+        Returns paginated (using parent ViewSet paginator) response.
+        """
         subsriptions = Follow.objects.filter(user=request.user)
         paginated_queryset = self.paginate_queryset(subsriptions)
         serializer = FollowSerializer(

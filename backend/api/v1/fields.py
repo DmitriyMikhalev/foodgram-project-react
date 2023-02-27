@@ -5,6 +5,9 @@ from rest_framework.fields import ImageField
 
 
 class Base64ImageField(ImageField):
+    """
+    Field to save file encoded in base64. Returns url to file at media dir.
+    """
     def to_internal_value(self, data):
         if isinstance(data, str) and data.startswith('data:image'):
             format, imgstr = data.split(';base64,')

@@ -81,8 +81,8 @@ class Ingredient(models.Model):
             )
         ]
         ordering = ('-id',)
-        verbose_name = 'Ингрединт'
-        verbose_name_plural = 'Ингрединты'
+        verbose_name = 'Ингредиент'
+        verbose_name_plural = 'Ингредиенты'
 
     def __str__(self):
         return self.name
@@ -164,7 +164,7 @@ class Recipe(models.Model):
         verbose_name='Теги'
     )
     text = models.TextField(
-        verbose_name='Текст'
+        verbose_name='Описание'
     )
 
     class Meta:

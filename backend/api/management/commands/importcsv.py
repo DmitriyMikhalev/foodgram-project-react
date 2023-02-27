@@ -9,6 +9,11 @@ FILE_DIR = os.path.join(settings.BASE_DIR, 'data')
 
 
 class Command(BaseCommand):
+    """
+    Command to load ingredient's fixtures.
+    Fixture must be located at data directory next to manage.py file.
+    Use: python manage.py importcsv <file>
+    """
     help = 'Заполнение модели объектами из выбранного файла'
 
     def add_arguments(self, parser):

@@ -13,6 +13,27 @@ BOOLEAN_CHOICES = (
 
 
 class RecipeFilter(FilterSet):
+    """
+    Used by DjangoFilterBackends came from django-filter library.
+    Allows to filter Recipe instance by:
+      - author: ../?author=<author>/
+                ../?author=1/
+        One selection (id).
+
+      - is_favorited: ../?is_favorited=<0_or_1>/
+                      ../?is_favorited=0/
+        One selection (false or true).
+
+      - is_in_shopping_cart: ../?is_in_shopping_cart=<0_or_1>/
+                             ../?is_in_shopping_cart=1/
+        One selection (false or true).
+
+      - tags: ../tags=<slug_1>&tags=<slug_2>&../
+              ../tags=breakfast&tags=5_min&../
+        Many selection using unique slug of tag.
+
+    This filters may be combined.
+    """
     author = ModelChoiceFilter(
         queryset=User.objects.all()
     )
@@ -33,6 +54,15 @@ class RecipeFilter(FilterSet):
         fields = ('author', 'tags')
 
     def get_is_favorited(self, queryset, name, value):
+        """
+        Returns answer for question "is recipe in the user's favorites?".
+
+        * For anonymous user with requested favorites returns empty QuerySet.
+        * For anonymous user with requested not favorites returns source
+          QuerySet (all recipes for anonymous are not favorite).
+        * For authenticated user uses filter or exclude option with related
+          entries at Favorite model.
+        """
         user = self.request.user
         value = int(value)
 
@@ -45,6 +75,15 @@ class RecipeFilter(FilterSet):
         return queryset.exclude(favorites__user=user)
 
     def get_is_in_shopping_cart(self, queryset, name, value):
+        """
+        Returns answer for question "is recipe in the user's cart?".
+
+        * For anonymous user with requested favorites returns empty QuerySet.
+        * For anonymous user with requested not favorites returns source
+          QuerySet (all recipes for anonymous are not favorite).
+        * For authenticated user uses filter or exclude option with related
+          entries at Cart model.
+        """
         user = self.request.user
         value = int(value)
 

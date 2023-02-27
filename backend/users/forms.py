@@ -7,6 +7,7 @@ User = get_user_model()
 
 
 class GroupAdminForm(forms.ModelForm):
+    """Form for change user's groups."""
     users = forms.ModelMultipleChoiceField(
         queryset=User.objects.all(),
         required=False,
@@ -29,6 +30,10 @@ class GroupAdminForm(forms.ModelForm):
         return instance
 
     def save_m2m(self):
+        """
+        Inasmuch where is only 1 group - STAFF - changing it for user means
+        is_staff = reversed is_staff.
+        """
         for user in self.instance.user_set.all():
             user.is_staff = not user.is_staff
             user.save()

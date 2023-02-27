@@ -10,6 +10,7 @@ from .models import Follow
 
 User = get_user_model()
 
+# To use custom model
 admin.site.unregister(Group)
 
 
@@ -86,6 +87,12 @@ class UserAdmin(BaseUserAdmin):
 
     @admin.action(description='Заблокировать')
     def block_users(self, request, queryset):
+        """
+        Set is_active=False for chosen users.
+
+        If this action made admin over superuser - delete all permissions and
+        block request's user.
+        """
         if queryset.filter(is_superuser=True).count():
             request.user.is_active = False
             request.user.is_staff = False
@@ -114,6 +121,15 @@ class UserAdmin(BaseUserAdmin):
 
     @admin.action(description='Разблокировать')
     def unblock_users(self, request, queryset):
+        """
+        Set is_active=True for chosen users. Superusers ingored.
+        If this action made admin over superuser or another admin - ignore this
+        users.
+        """
+        queryset = queryset.exclude(is_superuser=True)
+        if not request.user.is_superuser:
+            queryset = queryset.exclude(is_staff=True, is_superuser=True)
+
         for user in queryset:
             user.is_active = True
             user.save()

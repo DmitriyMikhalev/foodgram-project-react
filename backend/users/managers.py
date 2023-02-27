@@ -2,6 +2,7 @@ from django.contrib.auth.models import BaseUserManager
 
 
 class UserManager(BaseUserManager):
+    """Default UserManager with extra required arguments for creating user."""
     def _create_user(self, email, password, first_name,
                      last_name, username, **extra_fields):
         """Create and save a user with the given email and password."""
