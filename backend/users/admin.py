@@ -16,7 +16,8 @@ admin.site.unregister(Group)
 
 @admin.register(Follow)
 class FollowAdmin(ModelAdmin):
-    list_display = ('user', 'author')
+    list_display = ('id', 'user', 'author')
+    list_display_links = ('user',)
     list_filter = list_display
     search_fields = ('user__username',)
 
