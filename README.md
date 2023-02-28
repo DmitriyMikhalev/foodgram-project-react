@@ -186,28 +186,28 @@ DELETE http://<host>/api/v1/recipes/{id}/
 ## Add recipe to favorites
 Authorization: Token TOKENVALUE
 ```
-POST http://localhost/api/recipes/{id}/favorite/
+POST http://<host>/api/recipes/{id}/favorite/
 ```
 ## Delete recipe from favorites
 Authorization: Token TOKENVALUE
 ```
-DELETE http://localhost/api/recipes/{id}/favorite/
+DELETE http://<host>/api/recipes/{id}/favorite/
 ```
 # Shopping cart
 ## Add to shopping cart
 Authorization: Token TOKENVALUE
 ```
-POST http://localhost/api/recipes/{id}/shopping_cart/
+POST http://<host>/api/recipes/{id}/shopping_cart/
 ```
 ## Delete from shopping cart
 Authorization: Token TOKENVALUE
 ```
-DELETE http://localhost/api/recipes/{id}/shopping_cart/
+DELETE http://<host>/api/recipes/{id}/shopping_cart/
 ```
 ## Download shopping list
 Filename is shop_list.txt
 
 Authorization: Token TOKENVALUE
 ```
-GET http://localhost/api/recipes/download_shopping_cart/
+GET http://<host>/api/recipes/download_shopping_cart/
 ```
