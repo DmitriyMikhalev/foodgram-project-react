@@ -8,7 +8,6 @@ from djoser.conf import settings as djoser_settings
 from djoser.views import TokenCreateView as BaseTokenCreateView
 from djoser.views import UserViewSet as BaseUserViewSet
 from rest_framework.decorators import action
-from rest_framework.filters import SearchFilter
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.status import (HTTP_201_CREATED, HTTP_204_NO_CONTENT,
@@ -16,7 +15,7 @@ from rest_framework.status import (HTTP_201_CREATED, HTTP_204_NO_CONTENT,
 from rest_framework.viewsets import ModelViewSet, ReadOnlyModelViewSet
 from users.models import Follow
 
-from .filters import RecipeFilter
+from .filters import IngredientSearchFilter, RecipeFilter
 from .models import Cart, Favorite, Ingredient, IngredientAmount, Recipe, Tag
 from .paginations import PageLimitPagination
 from .permissions import IsOwnerOrReadOnly
@@ -28,7 +27,7 @@ User = get_user_model()
 
 
 class IngredientViewSet(ReadOnlyModelViewSet):
-    filter_backends = (SearchFilter,)
+    filter_backends = (IngredientSearchFilter,)
     pagination_class = None
     permission_classes = (AllowAny,)
     queryset = Ingredient.objects.all()

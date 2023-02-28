@@ -1,6 +1,7 @@
 from django.contrib.auth import get_user_model
 from django_filters import (AllValuesMultipleFilter, ChoiceFilter, FilterSet,
                             ModelChoiceFilter)
+from rest_framework.filters import SearchFilter
 
 from .models import Recipe
 
@@ -10,6 +11,10 @@ BOOLEAN_CHOICES = (
     (0, 'false',),
     (1, 'true',),
 )
+
+
+class IngredientSearchFilter(SearchFilter):
+    search_param = 'name'
 
 
 class RecipeFilter(FilterSet):

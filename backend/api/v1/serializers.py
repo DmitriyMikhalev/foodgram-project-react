@@ -157,8 +157,8 @@ class CreateRecipeSerializer(ModelSerializer, CartFavoriteFlagsMixin):
         """Create IngredientAmount (through model) entries manually."""
         IngredientAmount.objects.bulk_create(
             IngredientAmount(
-                amount=ingrd['amount'],
-                ingredient_id=ingrd['id'],
+                amount=int(ingrd['amount']),
+                ingredient_id=int(ingrd['id']),
                 recipe=recipe
             ) for ingrd in objs
         )
@@ -283,7 +283,10 @@ class CreateRecipeSerializer(ModelSerializer, CartFavoriteFlagsMixin):
                         }
                     )
 
-            ingredient = get_object_or_404(klass=Ingredient, pk=item['id'])
+            ingredient = get_object_or_404(
+                klass=Ingredient,
+                pk=int(item['id'])
+            )
             if ingredient in used_ingredients:
                 raise ValidationError(
                     detail={
@@ -291,8 +294,7 @@ class CreateRecipeSerializer(ModelSerializer, CartFavoriteFlagsMixin):
                     }
                 )
 
-            amount = item['amount']
-            if amount < 1:
+            if int(item['amount']) < 1:
                 raise ValidationError(
                     detail={
                         'ingredients': f'{ingredient}: неверное количество.'
