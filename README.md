@@ -17,7 +17,7 @@ Here you can:
 # Users
 ## Registration
 ```
-POST http://<host>/api/v1/users/
+POST http://<host>/api/users/
 
 {
     "email": "vpupkin@yandex.ru",
@@ -29,7 +29,7 @@ POST http://<host>/api/v1/users/
 ```
 ## Password change
 ```
-POST http://<host>/api/v1/users/set_password/
+POST http://<host>/api/users/set_password/
 
 {
     "new_password": "string",
@@ -38,7 +38,7 @@ POST http://<host>/api/v1/users/set_password/
 ```
 ## Get authorization token
 ```
-POST http://<host>/api/v1/auth/token/login/
+POST http://<host>/api/auth/token/login/
 
 {
     "password": "string",
@@ -48,19 +48,19 @@ POST http://<host>/api/v1/auth/token/login/
 ## Delete authorization token
 Authorization: Token TOKENVALUE
 ```
-POST http://<host>/api/v1/auth/token/logout/
+POST http://<host>/api/auth/token/logout/
 ```
 ## Get current user info
 ```
-GET http://<host>/api/v1/users/me/
+GET http://<host>/api/users/me/
 ```
 ## Get user info
 ```
-GET http://<host>/api/v1/users/{id}/
+GET http://<host>/api/users/{id}/
 ```
 ## Get users info
 ```
-GET http://<host>/api/v1/users/
+GET http://<host>/api/users/
 ```
 ## Get my subscriptions
 Authorization: Token TOKENVALUE
@@ -71,10 +71,10 @@ Query params:
 - recipes_limit (integer) — limit of recipes nested in objects on page
 
 ```
-GET http://<host>/api/v1/users/subscriptions/
-GET http://<host>/api/v1/users/subscriptions/?page=3
-GET http://<host>/api/v1/users/subscriptions/?limit=2
-GET http://<host>/api/v1/users/subscriptions/?recipes_limit=3
+GET http://<host>/api/users/subscriptions/
+GET http://<host>/api/users/subscriptions/?page=3
+GET http://<host>/api/users/subscriptions/?limit=2
+GET http://<host>/api/users/subscriptions/?recipes_limit=3
 ```
 ## Subscribe to user
 Authorization: Token TOKENVALUE
@@ -83,23 +83,23 @@ Query params:
 - recipes_limit (integer) — limit of recipes nested in object on page
 
 ```
-POST http://<host>/api/v1/users/{id}/subscribe/
-POST http://<host>/api/v1/users/{id}/subscribe/?recipes_limit=5
+POST http://<host>/api/users/{id}/subscribe/
+POST http://<host>/api/users/{id}/subscribe/?recipes_limit=5
 ```
 ## Unsubscribe from user
 Authorization: Token TOKENVALUE
 
 ```
-DELETE http://<host>/api/v1/users/{id}/subscribe/
+DELETE http://<host>/api/users/{id}/subscribe/
 ```
 # Tags
 ## Get tags
 ```
-GET http://<host>/api/v1/tags/
+GET http://<host>/api/tags/
 ```
 ## Get tag
 ```
-GET http://<host>/api/v1/tags/{id}/
+GET http://<host>/api/tags/{id}/
 ```
 # Ingredients
 ## Get ingredients
@@ -107,12 +107,12 @@ Query params:
 - name (string) — search by partial occurrence at the beginning of the ingredient name.
 
 ```
-GET http://<host>/api/v1/ingredients/
-GET http://<host>/api/v1/ingredients/?name=лу
+GET http://<host>/api/ingredients/
+GET http://<host>/api/ingredients/?name=лу
 ```
 ## Get ingredient
 ```
-GET http://<host>/api/v1/ingredients/{id}/
+GET http://<host>/api/ingredients/{id}/
 ```
 # Recipes
 ## Get recipes
@@ -125,19 +125,19 @@ Query params:
 - tags (slug) — show recipes that have at least one of given tags
 
 ```
-GET http://<host>/api/v1/recipes/
-GET http://<host>/api/v1/recipes/?tags=breakfast&tags=dinner/
-GET http://<host>/api/v1/recipes/?author=3/
-GET http://<host>/api/v1/recipes/?page=3&limit=1&is_favorited=0/
+GET http://<host>/api/recipes/
+GET http://<host>/api/recipes/?tags=breakfast&tags=dinner/
+GET http://<host>/api/recipes/?author=3/
+GET http://<host>/api/recipes/?page=3&limit=1&is_favorited=0/
 ```
 ## Get recipe
 ```
-GET http://<host>/api/v1/recipes/{id}/
+GET http://<host>/api/recipes/{id}/
 ```
 ## Create recipe
 Authorization: Token TOKENVALUE
 ```
-POST http://<host>/api/v1/recipes/
+POST http://<host>/api/recipes/
 
 {
     "ingredients": [
@@ -161,7 +161,7 @@ Authorization: Token TOKENVALUE
 
 Allowed only for author.
 ```
-PATCH http://<host>/api/v1/recipes/{id}/
+PATCH http://<host>/api/recipes/{id}/
 
 {
     "ingredients": [
@@ -180,7 +180,7 @@ Authorization: Token TOKENVALUE
 
 Allowed only for author.
 ```
-DELETE http://<host>/api/v1/recipes/{id}/
+DELETE http://<host>/api/recipes/{id}/
 ```
 # Favorites
 ## Add recipe to favorites

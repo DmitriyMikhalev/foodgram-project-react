@@ -9,7 +9,7 @@ from django.db import migrations
 
 def add_ingredients(apps, schema_edition):
     path = Path(__file__).resolve().parent.parent.parent
-    file = os.path.join(path, 'data\\ingredients.csv')
+    file = os.path.join(path, 'data', 'ingredients.csv')
     model = apps.get_model(
         app_label='api',
         model_name='Ingredient'
@@ -33,7 +33,7 @@ def add_ingredients(apps, schema_edition):
 
 def remove_ingredients(apps, schema_edition):
     path = Path(__file__).resolve().parent.parent.parent
-    file = os.path.join(path, 'data\\ingredients.csv')
+    file = os.path.join(path, 'data', 'ingredients.csv')
     model = apps.get_model(
         app_label='api',
         model_name='Ingredient'
