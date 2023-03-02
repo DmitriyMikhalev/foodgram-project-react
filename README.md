@@ -9,7 +9,56 @@ Here you can:
 - Subscribe to users and be among the first to learn about new entries
 - Download the list of ingredients needed to prepare the dishes in the basket
 
-# Available endpoints 
+# Installation and local deploy
+Follow these simple steps to local deploy.
+* Clone the repo:
+```
+git clone git@github.com:DmitriyMikhalev/foodgram-project-react.git
+```
+* Run Docker app and docker-compose:
+```
+cd infra
+docker-compose up -d
+```
+* Apply migrations at backend container
+```
+docker-compose exec foodgram_backend python manage.py migrate
+```
+* Collect static files for admin panel
+```
+docker-compose exec foodgram_backend python manage.py collectstatic --noinput
+```
+* Load fixtures for database
+```
+docker-compose exec foodgram_backend python manage.py loaddata data/fixtures.json
+```
+* App is available. Follow the link
+```
+http://localhost/
+```
+
+# Deploy at server
+If you want to deploy this project on remote host, follow the instruction
+* Make sure you have already installed docker and docker-compose
+* Clone the repo
+```
+git clone git@github.com:DmitriyMikhalev/foodgram-project-react.git
+```
+* Locally change infra/nginx.conf: write your server IP
+* Clone nginx config file and docker-compose instructions to server:
+```
+scp nginx.conf <username>@<server>:/etc/nginx/conf.d/default.conf
+scp docker-compose.yaml <username>@<server>:/home/<username>/docker-compose.yaml
+```
+* Create .env file. Sample you can find at infra directory
+* Open directory with docker-compose and start containers
+```
+sudo docker-compose up -d
+```
+* Service is available on your server.
+* Do not forget to migrate data and collect static.
+
+# Available API endpoints 
 
 ------------
 
