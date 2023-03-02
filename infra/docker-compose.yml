@@ -2,7 +2,6 @@ version: '3.3'
 
 services:
   foodgram_db:
-    container_name: foodgram_db
     image: postgres:13.0-alpine
     restart: always
     volumes:
@@ -11,7 +10,6 @@ services:
       - ./.env
 
   foodgram_backend:
-    container_name: foodgram_backend
     image: cokasqq/foodgram_backend:latest
     restart: always
     volumes:
@@ -23,13 +21,11 @@ services:
       - ./.env
 
   foodgram_frontend:
-    container_name: foodgram_frontend
     image: cokasqq/foodgram_frontend:latest
     volumes:
       - ../frontend/:/backend/result_build/
 
   foodgram_nginx:
-    container_name: foodgram_nginx
     image: nginx:1.19.3
     ports:
       - "80:80"

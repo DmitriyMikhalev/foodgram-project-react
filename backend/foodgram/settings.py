@@ -12,10 +12,10 @@ SECRET_KEY = os.getenv('DJANGO_SECRET_KEY')
 DEBUG = False
 
 ALLOWED_HOSTS = [
+    '158.160.22.236',
     'localhost',
     '127.0.0.1',
     '[::1]',
-    '158.160.22.236'
 ]
 
 INSTALLED_APPS = [
@@ -191,6 +191,7 @@ CORS_URLS_REGEXES = [
 ]
 
 CORS_ALLOWED_ORIGINS = [
+    '158.160.22.236',
     'http://localhost',
     'http://127.0.0.1',
     'http://[::1]'
