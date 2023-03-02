@@ -11,10 +11,10 @@ SECRET_KEY = os.getenv('DJANGO_SECRET_KEY')
 
 DEBUG = False
 
-ALLOWED_HOSTS = ['*']
-
-INTERNAL_IPS = [
+ALLOWED_HOSTS = [
+    'localhost',
     '127.0.0.1',
+    '[::1]'
 ]
 
 INSTALLED_APPS = [
@@ -183,6 +183,14 @@ DJOSER = {
     'HIDE_USERS': False  # allow anonymous user to get list of users
 }
 
-CORS_URLS_REGEX = r'^/api/.*$'
+CORS_URLS_REGEXES = [
+    r'^/api/.*$',
+    r'^/admin/.*$',
+    r'^/swagger/.*$'
+]
 
-CORS_ORIGIN_ALLOW_ALL = True
+CORS_ALLOWED_ORIGINS = [
+    'http://localhost',
+    'http://127.0.0.1',
+    'http://[::1]'
+]
