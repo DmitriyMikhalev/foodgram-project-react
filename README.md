@@ -1,3 +1,4 @@
+[![foodgram workflow](https://github.com/DmitriyMikhalev/foodgram-project-react/actions/workflows/foodgram_workflow.yaml/badge.svg)](https://github.com/DmitriyMikhalev/foodgram-project-react/actions/workflows/foodgram_workflow.yaml)
 # Foodgram — grocery assistant
 ------------
 
