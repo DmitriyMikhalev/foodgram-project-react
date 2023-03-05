@@ -137,8 +137,10 @@ class Recipe(models.Model):
         validators=(
             MinValueValidator(
                 limit_value=settings.MIN_COOKING_TIME,
-                message='Время приготовления не может составлять '
-                        + 'менее 1 минуты.'
+                message=(
+                    'Время приготовления не может составлять '
+                    'менее 1 минуты.'
+                )
             ),
         ),
         verbose_name='Время приготовления (мин)'

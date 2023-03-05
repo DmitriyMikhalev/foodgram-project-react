@@ -169,7 +169,7 @@ class RecipeViewSet(ModelViewSet):
         Delete Favorite or Cart entry with given recipe and request's user.
 
         If passed recipe doesn't exist returns HTTP_404.
-        If object exists returns HTTP_400.
+        If object does not exists returns HTTP_400.
 
         Returns HTTP_204.
         """
